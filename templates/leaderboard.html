@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Leaderboard - Smart Speak</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 36px; color: #333; margin-bottom: 10px; }
+        .header p { color: #666; font-size: 16px; }
+        .nav-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .nav-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .class-selector {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: white;
+        }
+        .class-selector label {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+        .class-selector select {
+            padding: 12px 25px;
+            border-radius: 15px;
+            border: none;
+            font-size: 18px;
+            font-family: inherit;
+            cursor: pointer;
+            background: white;
+            color: #333;
+            min-width: 200px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .week-info {
+            text-align: center;
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white;
+            padding: 12px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+        /* Podium */
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 15px;
+            margin-bottom: 35px;
+            min-height: 220px;
+        }
+        .podium-place {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .podium-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .podium-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            max-width: 100px;
+            word-break: break-word;
+            margin-bottom: 5px;
+        }
+        .podium-xp {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .podium-block {
+            width: 100px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            padding: 15px 0;
+        }
+        .podium-1st { background: linear-gradient(135deg, #FFD700, #FFA500); height: 140px; }
+        .podium-2nd { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); height: 100px; }
+        .podium-3rd { background: linear-gradient(135deg, #CD7F32, #A0522D); height: 75px; }
+        .podium-avatar-1st { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .podium-avatar-2nd { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); }
+        .podium-avatar-3rd { background: linear-gradient(135deg, #CD7F32, #A0522D); }
+        /* Table */
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .leaderboard-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 15px;
+        }
+        .leaderboard-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 15px;
+        }
+        .leaderboard-table tr:last-child td { border-bottom: none; }
+        .leaderboard-table tr:nth-child(even) td { background: #fafafa; }
+        .leaderboard-table tr:hover td { background: #f0f0ff; }
+        .rank-badge {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); color: white; }
+        .rank-2 { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); color: white; }
+        .rank-3 { background: linear-gradient(135deg, #CD7F32, #A0522D); color: white; }
+        .rank-other { background: #f0f0f0; color: #555; }
+        .xp-bar-container { display: flex; align-items: center; gap: 10px; }
+        .xp-bar {
+            flex: 1;
+            height: 8px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .xp-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+        .level-badge {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .badge-count {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        .empty-state span { font-size: 60px; display: block; margin-bottom: 15px; }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+        .student-row-highlight { background: #fff9e6 !important; }
+        .my-rank-indicator {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-left: 8px;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .podium-block { width: 80px; }
+            .podium-name { max-width: 80px; font-size: 12px; }
+            .leaderboard-table th, .leaderboard-table td { padding: 10px 8px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 Weekly Leaderboard</h1>
+            <p>See who's the top English speaker this week!</p>
+        </div>
+
+        <div class="nav-bar">
+            {% if user_role == 'teacher' %}
+            <a href="/teacher-dashboard" class="nav-btn">🏫 Back to Dashboard</a>
+            {% else %}
+            <a href="/main" class="nav-btn">🏠 Back to Learning</a>
+            <a href="/profile" class="nav-btn">👤 My Profile</a>
+            {% endif %}
+        </div>
+
+        <div class="class-selector" style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;">
+            <div>
+                <label>📚 Select Class:</label>
+                <select id="classSelect" onchange="loadLeaderboard()">
+                    <option value="">-- Choose Class --</option>
+                    {% for cls in classes %}
+                    <option value="{{ cls }}" {% if cls == user_class %}selected{% endif %}>Class {{ cls }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label>🏫 Division (optional):</label>
+                <select id="divisionSelect" onchange="loadLeaderboard()">
+                    <option value="">All Divisions</option>
+                    <option value="A" {% if user_division == 'A' %}selected{% endif %}>Division A</option>
+                    <option value="B" {% if user_division == 'B' %}selected{% endif %}>Division B</option>
+                    <option value="C" {% if user_division == 'C' %}selected{% endif %}>Division C</option>
+                    <option value="D" {% if user_division == 'D' %}selected{% endif %}>Division D</option>
+                    <option value="E" {% if user_division == 'E' %}selected{% endif %}>Division E</option>
+                    <option value="F" {% if user_division == 'F' %}selected{% endif %}>Division F</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="week-info" id="weekInfo" style="display:none;">
+            📅 Week of <span id="weekRange"></span> | Resets every Monday
+        </div>
+
+        <div id="leaderboardContent">
+            <div class="empty-state">
+                <span>📚</span>
+                Select a class above to see the leaderboard!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const currentUserId = '{{ session.user_id if session.user_id else "" }}';
+
+        function getWeekRange() {
+            const now = new Date();
+            const day = now.getDay();
+            const monday = new Date(now);
+            monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            const fmt = d => d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+            return fmt(monday) + ' - ' + fmt(sunday);
+        }
+
+        async function loadLeaderboard() {
+            const cls = document.getElementById('classSelect').value;
+            if (!cls) {
+                document.getElementById('leaderboardContent').innerHTML = `
+                    <div class="empty-state"><span>📚</span>Select a class above to see the leaderboard!</div>`;
+                document.getElementById('weekInfo').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('leaderboardContent').innerHTML = `<div class="loading">⏳ Loading leaderboard...</div>`;
+            document.getElementById('weekInfo').style.display = 'block';
+            document.getElementById('weekRange').textContent = getWeekRange();
+
+            try {
+                const div = document.getElementById('divisionSelect') ? document.getElementById('divisionSelect').value : '';
+                const res = await fetch('/api/get-leaderboard', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ class: cls, division: div })
+                });
+                const data = await res.json();
+
+                if (!data.success) {
+                    document.getElementById('leaderboardContent').innerHTML = `<div class="empty-state"><span>❌</span>${data.message || 'Error loading leaderboard'}</div>`;
+                    return;
+                }
+
+                if (!data.leaderboard || data.leaderboard.length === 0) {
+                    document.getElementById('leaderboardContent').innerHTML = `<div class="empty-state"><span>🤔</span>No students found in Class ${cls} yet!</div>`;
+                    return;
+                }
+
+                renderLeaderboard(data.leaderboard);
+            } catch (e) {
+                document.getElementById('leaderboardContent').innerHTML = `<div class="empty-state"><span>❌</span>Error loading data. Please try again.</div>`;
+            }
+        }
+
+        function renderLeaderboard(students) {
+            const maxWeeklyXP = students[0]?.weekly_xp || students[0]?.xp || 1;
+            let html = '';
+
+            // Podium for top 3
+            if (students.length >= 1) {
+                html += '<div class="podium">';
+                // 2nd place
+                if (students.length >= 2) {
+                    html += `
+                    <div class="podium-place">
+                        <div class="podium-avatar podium-avatar-2nd">🥈</div>
+                        <div class="podium-name">${students[1].name}</div>
+                        <div class="podium-xp">${students[1].weekly_xp || 0} XP this week</div>
+                        <div class="podium-block podium-2nd">2nd</div>
+                    </div>`;
+                }
+                // 1st place
+                html += `
+                <div class="podium-place">
+                    <div class="podium-avatar podium-avatar-1st">🥇</div>
+                    <div class="podium-name">${students[0].name}</div>
+                    <div class="podium-xp">${students[0].weekly_xp || 0} XP this week</div>
+                    <div class="podium-block podium-1st">1st</div>
+                </div>`;
+                // 3rd place
+                if (students.length >= 3) {
+                    html += `
+                    <div class="podium-place">
+                        <div class="podium-avatar podium-avatar-3rd">🥉</div>
+                        <div class="podium-name">${students[2].name}</div>
+                        <div class="podium-xp">${students[2].weekly_xp || 0} XP this week</div>
+                        <div class="podium-block podium-3rd">3rd</div>
+                    </div>`;
+                }
+                html += '</div>';
+            }
+
+            // Full table
+            html += `
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Student</th>
+                        <th>Div</th>
+                        <th>Level</th>
+                        <th>This Week ⭐</th>
+                        <th>Total XP</th>
+                        <th>Badges</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            students.forEach((s, i) => {
+                const rank = i + 1;
+                const isMe = s.user_id == currentUserId;
+                const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-other';
+                const rankIcon = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+                const weeklyXp = s.weekly_xp || 0;
+                const xpPct = Math.min(100, (weeklyXp / maxWeeklyXP) * 100);
+
+                html += `
+                <tr class="${isMe ? 'student-row-highlight' : ''}">
+                    <td><span class="rank-badge ${rankClass}">${rankIcon}</span></td>
+                    <td>
+                        <strong>${s.name}</strong>
+                        ${isMe ? '<span class="my-rank-indicator">You!</span>' : ''}
+                    </td>
+                    <td><span style="font-size:12px;color:#666;">${s.division || '-'}</span></td>
+                    <td><span class="level-badge">Lv ${s.level}</span></td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div class="xp-bar" style="width:80px;height:8px;background:#eee;border-radius:4px;">
+                                <div class="xp-bar-fill" style="width:${xpPct}%;height:100%;background:linear-gradient(90deg,#f7971e,#ffd200);border-radius:4px;"></div>
+                            </div>
+                            <span style="font-size:14px;font-weight:bold;color:#e67e22;">${weeklyXp} XP</span>
+                        </div>
+                    </td>
+                    <td><span style="font-size:13px;color:#888;">${s.xp} XP</span></td>
+                    <td><span class="badge-count">🏅 ${s.badges}</span></td>
+                </tr>`;
+            });
+
+            html += `</tbody></table>`;
+            document.getElementById('leaderboardContent').innerHTML = html;
+        }
+
+        // Auto-load on page start if a class is pre-selected (e.g. student viewing own class)
+        window.addEventListener('DOMContentLoaded', () => {
+            const cls = document.getElementById('classSelect').value;
+            if (cls) loadLeaderboard();
+        });
+
+        // Auto-refresh leaderboard every 60 seconds if a class is selected
+        setInterval(() => {
+            const cls = document.getElementById('classSelect').value;
+            if (cls) loadLeaderboard();
+        }, 60000);
+    </script>
+</body>
+</html>

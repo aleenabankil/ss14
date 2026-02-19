@@ -1,0 +1,16 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+venv/
+.venv/
+*.log
+users_data.json
+teachers_data.json
+static/audio/*.mp3
+!static/audio/.gitkeep

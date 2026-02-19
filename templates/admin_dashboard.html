@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Gayathri Smart Speak</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f2f5;
+            color: #2d3436;
+            min-height: 100vh;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            width: 240px;
+            height: 100vh;
+            background: linear-gradient(180deg, #2d3436 0%, #1e272e 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+        }
+        .sidebar-logo {
+            padding: 28px 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-logo .logo-icon { font-size: 36px; }
+        .sidebar-logo h2 { font-size: 16px; font-weight: 700; margin-top: 6px; color: #a29bfe; }
+        .sidebar-logo p { font-size: 11px; color: #b2bec3; margin-top: 2px; }
+        .sidebar-nav { flex: 1; padding: 20px 0; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            color: #b2bec3;
+            border-left: 3px solid transparent;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.07); color: white; }
+        .nav-item.active { background: rgba(108,92,231,0.2); color: #a29bfe; border-left-color: #6c5ce7; }
+        .nav-item .nav-icon { font-size: 18px; width: 22px; text-align: center; }
+        .nav-badge {
+            background: #e17055;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .admin-info { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .admin-avatar {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+        }
+        .admin-name { font-size: 13px; font-weight: 600; color: white; }
+        .admin-role { font-size: 11px; color: #b2bec3; }
+        .btn-logout {
+            width: 100%;
+            padding: 9px;
+            background: rgba(255,118,117,0.15);
+            color: #ff7675;
+            border: 1px solid rgba(255,118,117,0.3);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { background: rgba(255,118,117,0.3); }
+
+        /* ── Main Content ── */
+        .main {
+            margin-left: 240px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        .topbar h1 { font-size: 24px; font-weight: 700; color: #2d3436; }
+        .topbar p { font-size: 13px; color: #636e72; margin-top: 3px; }
+        .refresh-btn {
+            padding: 9px 18px;
+            background: white;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #636e72;
+        }
+        .refresh-btn:hover { background: #f8f9fa; border-color: #6c5ce7; color: #6c5ce7; }
+
+        /* ── Stat Cards ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-icon {
+            width: 52px; height: 52px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .stat-icon.blue { background: #e8f4fd; }
+        .stat-icon.green { background: #e8f8f0; }
+        .stat-icon.orange { background: #fef3e8; }
+        .stat-icon.purple { background: #f0ecfd; }
+        .stat-value { font-size: 28px; font-weight: 700; color: #2d3436; line-height: 1; }
+        .stat-label { font-size: 12px; color: #636e72; margin-top: 4px; font-weight: 500; }
+
+        /* ── Section ── */
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* ── Table Card ── */
+        .card {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-header h2 { font-size: 16px; font-weight: 700; }
+        .card-header p { font-size: 12px; color: #636e72; margin-top: 2px; }
+        .search-input {
+            padding: 8px 14px;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            width: 220px;
+            transition: border-color 0.2s;
+        }
+        .search-input:focus { border-color: #6c5ce7; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #f8f9fa;
+            padding: 12px 18px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: #636e72;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 14px 18px;
+            font-size: 13px;
+            border-top: 1px solid #f5f5f5;
+            color: #2d3436;
+        }
+        tr:hover td { background: #fafafa; }
+
+        /* ── Status Badges ── */
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .badge-pending { background: #ffeeba; color: #856404; }
+        .badge-approved { background: #d4edda; color: #155724; }
+        .badge-rejected { background: #f8d7da; color: #721c24; }
+
+        /* ── Action Buttons ── */
+        .action-group { display: flex; gap: 6px; flex-wrap: wrap; }
+        .btn-sm {
+            padding: 5px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-sm:hover { opacity: 0.85; transform: translateY(-1px); }
+        .btn-approve { background: #00b894; color: white; }
+        .btn-reject { background: #e17055; color: white; }
+        .btn-delete { background: #ff7675; color: white; }
+        .btn-reset { background: #6c5ce7; color: white; }
+        .btn-restore { background: #fdcb6e; color: #2d3436; }
+
+        /* ── Empty State ── */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #b2bec3;
+        }
+        .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; }
+
+        /* ── Toast ── */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #2d3436;
+            color: white;
+            padding: 14px 22px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 999;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        #toast.show { opacity: 1; }
+        #toast.success { background: #00b894; }
+        #toast.error { background: #e17055; }
+
+        /* ── Modal ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            display: none;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal h3 { font-size: 18px; margin-bottom: 8px; }
+        .modal p { font-size: 13px; color: #636e72; margin-bottom: 20px; }
+        .modal input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            outline: none;
+        }
+        .modal input:focus { border-color: #6c5ce7; }
+        .modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
+        .btn-cancel {
+            padding: 9px 20px;
+            background: #dfe6e9;
+            color: #636e72;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-confirm {
+            padding: 9px 20px;
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* ── Loading ── */
+        .spinner {
+            display: inline-block;
+            width: 18px; height: 18px;
+            border: 2px solid #dfe6e9;
+            border-top-color: #6c5ce7;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .sidebar { width: 60px; }
+            .sidebar-logo h2, .sidebar-logo p, .nav-item span,
+            .admin-name, .admin-role, .btn-logout { display: none; }
+            .main { margin-left: 60px; padding: 20px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════ SIDEBAR ═══════════════════════ -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">🛡️</div>
+        <h2>Admin Panel</h2>
+        <p>Gayathri Smart Speak</p>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-item active" onclick="showSection('overview')" id="nav-overview">
+            <span class="nav-icon">📊</span>
+            <span>Overview</span>
+        </div>
+        <div class="nav-item" onclick="showSection('pending')" id="nav-pending">
+            <span class="nav-icon">⏳</span>
+            <span>Pending Teachers</span>
+            <span class="nav-badge" id="pendingBadge" style="display:none">0</span>
+        </div>
+        <div class="nav-item" onclick="showSection('teachers')" id="nav-teachers">
+            <span class="nav-icon">👨‍🏫</span>
+            <span>All Teachers</span>
+        </div>
+        <div class="nav-item" onclick="showSection('students')" id="nav-students">
+            <span class="nav-icon">🎓</span>
+            <span>All Students</span>
+        </div>
+        <div class="nav-item" onclick="showSection('pwresets')" id="nav-pwresets">
+            <span class="nav-icon">🔑</span>
+            <span>PW Reset Requests</span>
+            <span class="nav-badge" id="pwResetBadge" style="display:none">0</span>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="admin-info">
+            <div class="admin-avatar">👤</div>
+            <div>
+                <div class="admin-name">{{ admin_username }}</div>
+                <div class="admin-role">Administrator</div>
+            </div>
+        </div>
+        <button class="btn-logout" onclick="window.location.href='/admin/logout'">🚪 Logout</button>
+    </div>
+</aside>
+
+<!-- ═══════════════════════ MAIN ═══════════════════════ -->
+<main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <div>
+            <h1 id="sectionTitle">Overview</h1>
+            <p id="sectionSubtitle">Welcome back, {{ admin_username }}!</p>
+        </div>
+        <button class="refresh-btn" onclick="loadAll()">🔄 Refresh</button>
+    </div>
+
+    <!-- ── Overview Section ── -->
+    <div class="section active" id="section-overview">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">🎓</div>
+                <div>
+                    <div class="stat-value" id="stat-students">—</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">👨‍🏫</div>
+                <div>
+                    <div class="stat-value" id="stat-teachers">—</div>
+                    <div class="stat-label">Active Teachers</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">⏳</div>
+                <div>
+                    <div class="stat-value" id="stat-pending">—</div>
+                    <div class="stat-label">Pending Approvals</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">❌</div>
+                <div>
+                    <div class="stat-value" id="stat-rejected">—</div>
+                    <div class="stat-label">Rejected Teachers</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Pending Preview -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2>⏳ Pending Teacher Approvals</h2>
+                    <p>Teachers waiting for your approval</p>
+                </div>
+                <button class="refresh-btn" onclick="showSection('pending')">View All →</button>
+            </div>
+            <div id="overviewPendingTable">
+                <div class="empty-state">
+                    <div class="spinner"></div> Loading...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Pending Teachers Section ── -->
+    <div class="section" id="section-pending">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2>⏳ Pending Teacher Requests</h2>
+                    <p>Review and approve or reject teacher registrations</p>
+                </div>
+                <input class="search-input" placeholder="🔍 Search by name or username..." oninput="filterTable('pendingTable', this.value)">
+            </div>
+            <div id="pendingTableContainer">
+                <div class="empty-state"><div class="spinner"></div> Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── All Teachers Section ── -->
+    <div class="section" id="section-teachers">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2>👨‍🏫 All Teachers</h2>
+                    <p>Manage all teacher accounts</p>
+                </div>
+                <input class="search-input" placeholder="🔍 Search teachers..." oninput="filterTable('teachersTable', this.value)">
+            </div>
+            <div id="teachersTableContainer">
+                <div class="empty-state"><div class="spinner"></div> Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── All Students Section ── -->
+    <div class="section" id="section-students">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2>🎓 All Students</h2>
+                    <p>Manage all student accounts</p>
+                </div>
+                <input class="search-input" placeholder="🔍 Search students..." oninput="filterTable('studentsTable', this.value)">
+            </div>
+            <div id="studentsTableContainer">
+                <div class="empty-state"><div class="spinner"></div> Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Reset Requests Section -->
+    <div class="section" id="section-pwresets">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2>🔑 Teacher Password Reset Requests</h2>
+                    <p>Teachers who have requested a password reset</p>
+                </div>
+            </div>
+            <div id="pwResetsTableContainer">
+                <div class="empty-state"><div class="spinner"></div> Loading...</div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- ── Password Reset Modal ── -->
+<div class="modal-overlay" id="resetModal">
+    <div class="modal">
+        <h3>🔑 Reset Password</h3>
+        <p id="resetModalDesc">Enter a new password for this account.</p>
+        <input type="text" id="resetNewPassword" placeholder="New password">
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-confirm" onclick="confirmReset()">Reset Password</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Confirm Delete Modal ── -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+        <h3>⚠️ Confirm Delete</h3>
+        <p id="deleteModalDesc">Are you sure you want to delete this account? This action cannot be undone.</p>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-confirm" style="background:#ff7675" onclick="confirmDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════ STATE ═══════════════════════
+let allStudents = [];
+let allTeachers = [];
+let modalAction = null;
+let modalTarget = null;
+
+// ═══════════════════════ INIT ═══════════════════════
+document.addEventListener('DOMContentLoaded', loadAll);
+
+function loadAll() {
+    loadStats();
+    loadTeachers();
+    loadStudents();
+    // Refresh PW reset badge
+    fetch('/api/admin/password-reset-requests').then(r => r.json()).then(data => {
+        const badge = document.getElementById('pwResetBadge');
+        if (data.success && data.requests.length > 0) {
+            badge.textContent = data.requests.length;
+            badge.style.display = 'inline-block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }).catch(() => {});
+}
+
+// ═══════════════════════ NAVIGATION ═══════════════════════
+function showSection(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('section-' + name).classList.add('active');
+    document.getElementById('nav-' + name).classList.add('active');
+    const titles = {
+        overview: ['Overview', 'Welcome back!'],
+        pending:  ['Pending Approvals', 'Teachers awaiting your review'],
+        teachers: ['All Teachers', 'Manage teacher accounts'],
+        students: ['All Students', 'Manage student accounts']
+    };
+    document.getElementById('sectionTitle').textContent = titles[name][0];
+    document.getElementById('sectionSubtitle').textContent = titles[name][1];
+}
+
+// ═══════════════════════ LOAD DATA ═══════════════════════
+async function loadStats() {
+    try {
+        const res = await fetch('/api/admin/stats');
+        const data = await res.json();
+        if (data.success) {
+            const s = data.stats;
+            document.getElementById('stat-students').textContent = s.total_students;
+            document.getElementById('stat-teachers').textContent = s.total_teachers;
+            document.getElementById('stat-pending').textContent = s.pending_teachers;
+            document.getElementById('stat-rejected').textContent = s.rejected_teachers;
+
+            const badge = document.getElementById('pendingBadge');
+            if (s.pending_teachers > 0) {
+                badge.textContent = s.pending_teachers;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    } catch(e) { console.error('Stats error', e); }
+}
+
+async function loadTeachers() {
+    try {
+        const res = await fetch('/api/admin/teachers');
+        const data = await res.json();
+        if (data.success) {
+            allTeachers = data.teachers;
+            renderTeachersTable();
+            renderPendingTable();
+            renderOverviewPending();
+        }
+    } catch(e) { console.error('Teachers error', e); }
+}
+
+async function loadStudents() {
+    try {
+        const res = await fetch('/api/admin/students');
+        const data = await res.json();
+        if (data.success) {
+            allStudents = data.students;
+            renderStudentsTable();
+        }
+    } catch(e) { console.error('Students error', e); }
+}
+
+// ═══════════════════════ RENDER TABLES ═══════════════════════
+function statusBadge(status) {
+    const map = {
+        pending:  '<span class="badge-status badge-pending">⏳ Pending</span>',
+        approved: '<span class="badge-status badge-approved">✅ Approved</span>',
+        rejected: '<span class="badge-status badge-rejected">❌ Rejected</span>'
+    };
+    return map[status] || map['approved'];
+}
+
+function renderPendingTable() {
+    const pending = allTeachers.filter(t => t.status === 'pending');
+    const container = document.getElementById('pendingTableContainer');
+    if (pending.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">🎉</div><p>No pending teacher requests. All caught up!</p></div>`;
+        return;
+    }
+    container.innerHTML = `
+    <table id="pendingTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Requested</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${pending.map(t => `
+            <tr data-search="${(t.name+t.username).toLowerCase()}">
+                <td><strong>${esc(t.name || '—')}</strong></td>
+                <td><code>${esc(t.username)}</code></td>
+                <td>${t.created_at}</td>
+                <td>
+                    <div class="action-group">
+                        <button class="btn-sm btn-approve" onclick="approveTeacher('${t.id}')">✅ Approve</button>
+                        <button class="btn-sm btn-reject" onclick="rejectTeacher('${t.id}')">❌ Reject</button>
+                        <button class="btn-sm btn-delete" onclick="promptDelete('teacher','${t.id}','${esc(t.name || t.username)}')">🗑️ Delete</button>
+                    </div>
+                </td>
+            </tr>`).join('')}
+        </tbody>
+    </table>`;
+}
+
+function renderOverviewPending() {
+    const pending = allTeachers.filter(t => t.status === 'pending');
+    const container = document.getElementById('overviewPendingTable');
+    if (pending.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">🎉</div><p>No pending requests!</p></div>`;
+        return;
+    }
+    container.innerHTML = `
+    <table>
+        <thead><tr><th>Name</th><th>Username</th><th>Requested</th><th>Actions</th></tr></thead>
+        <tbody>
+            ${pending.slice(0,5).map(t => `
+            <tr>
+                <td><strong>${esc(t.name || '—')}</strong></td>
+                <td><code>${esc(t.username)}</code></td>
+                <td>${t.created_at}</td>
+                <td>
+                    <div class="action-group">
+                        <button class="btn-sm btn-approve" onclick="approveTeacher('${t.id}')">✅ Approve</button>
+                        <button class="btn-sm btn-reject" onclick="rejectTeacher('${t.id}')">❌ Reject</button>
+                    </div>
+                </td>
+            </tr>`).join('')}
+        </tbody>
+    </table>`;
+}
+
+function renderTeachersTable() {
+    const container = document.getElementById('teachersTableContainer');
+    if (allTeachers.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">👨‍🏫</div><p>No teacher accounts yet.</p></div>`;
+        return;
+    }
+    container.innerHTML = `
+    <table id="teachersTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Username / ID</th>
+                <th>Status</th>
+                <th>Last Active</th>
+                <th>Joined</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${allTeachers.map(t => `
+            <tr data-search="${(t.name+t.username).toLowerCase()}">
+                <td><strong>${esc(t.name || '—')}</strong></td>
+                <td><code>${esc(t.username)}</code><br><small style="color:#b2bec3">${esc(t.id)}</small></td>
+                <td>${statusBadge(t.status)}</td>
+                <td>${t.last_active}</td>
+                <td>${t.created_at}</td>
+                <td>
+                    <div class="action-group">
+                        ${t.status === 'pending' ? `
+                            <button class="btn-sm btn-approve" onclick="approveTeacher('${t.id}')">✅ Approve</button>
+                            <button class="btn-sm btn-reject" onclick="rejectTeacher('${t.id}')">❌ Reject</button>` : ''}
+                        ${t.status === 'rejected' ? `
+                            <button class="btn-sm btn-restore" onclick="approveTeacher('${t.id}')">♻️ Restore</button>` : ''}
+                        ${t.status === 'approved' ? `
+                            <button class="btn-sm btn-reject" onclick="rejectTeacher('${t.id}')">🚫 Suspend</button>` : ''}
+                        <button class="btn-sm btn-reset" onclick="promptReset('teacher','${t.id}','${esc(t.name || t.username)}')">🔑 Reset PW</button>
+                        <button class="btn-sm btn-delete" onclick="promptDelete('teacher','${t.id}','${esc(t.name || t.username)}')">🗑️ Delete</button>
+                    </div>
+                </td>
+            </tr>`).join('')}
+        </tbody>
+    </table>`;
+}
+
+function renderStudentsTable() {
+    const container = document.getElementById('studentsTableContainer');
+    if (allStudents.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">🎓</div><p>No student accounts yet.</p></div>`;
+        return;
+    }
+    container.innerHTML = `
+    <table id="studentsTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>User ID</th>
+                <th>Class</th>
+                <th>Level</th>
+                <th>Total XP</th>
+                <th>Last Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${allStudents.map(s => `
+            <tr data-search="${(s.name+s.id).toLowerCase()}">
+                <td><strong>${esc(s.name || '—')}</strong></td>
+                <td><code>${esc(s.id)}</code></td>
+                <td>${s.class || '—'} ${s.division || ''}</td>
+                <td>⭐ ${s.level}</td>
+                <td>${s.total_xp} XP</td>
+                <td>${s.last_active}</td>
+                <td>
+                    <div class="action-group">
+                        <button class="btn-sm btn-reset" onclick="promptReset('student','${s.id}','${esc(s.name)}')">🔑 Reset PW</button>
+                        <button class="btn-sm btn-delete" onclick="promptDelete('student','${s.id}','${esc(s.name)}')">🗑️ Delete</button>
+                    </div>
+                </td>
+            </tr>`).join('')}
+        </tbody>
+    </table>`;
+}
+
+// ═══════════════════════ ACTIONS ═══════════════════════
+async function approveTeacher(id) {
+    const res = await fetch('/api/admin/approve-teacher', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({teacher_id: id})
+    });
+    const data = await res.json();
+    if (data.success) { showToast('✅ Teacher approved!', 'success'); loadAll(); }
+    else showToast(data.message, 'error');
+}
+
+async function rejectTeacher(id) {
+    const res = await fetch('/api/admin/reject-teacher', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({teacher_id: id})
+    });
+    const data = await res.json();
+    if (data.success) { showToast('Teacher suspended/rejected.', 'success'); loadAll(); }
+    else showToast(data.message, 'error');
+}
+
+// ─── Delete ───
+function promptDelete(type, id, name) {
+    modalAction = 'delete';
+    modalTarget = {type, id};
+    document.getElementById('deleteModalDesc').textContent = `Delete "${name}"? This cannot be undone.`;
+    document.getElementById('deleteModal').classList.add('show');
+}
+
+async function confirmDelete() {
+    closeModal();
+    const {type, id} = modalTarget;
+    const url = type === 'teacher' ? '/api/admin/delete-teacher' : '/api/admin/delete-student';
+    const body = type === 'teacher' ? {teacher_id: id} : {student_id: id};
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (data.success) { showToast('🗑️ Account deleted.', 'success'); loadAll(); }
+    else showToast(data.message, 'error');
+}
+
+// ─── Password Reset ───
+function promptReset(type, id, name) {
+    modalAction = 'reset';
+    modalTarget = {type, id};
+    const hint = type === 'teacher' ? 'exactly 6 characters' : 'at least 4 characters';
+    document.getElementById('resetModalDesc').textContent = `Set a new password for "${name}" (${hint}).`;
+    document.getElementById('resetNewPassword').value = '';
+    document.getElementById('resetModal').classList.add('show');
+}
+
+async function confirmReset() {
+    const newPw = document.getElementById('resetNewPassword').value.trim();
+    const {type, id} = modalTarget;
+    if (!newPw) { showToast('Please enter a password.', 'error'); return; }
+    closeModal();
+    const url = type === 'teacher' ? '/api/admin/reset-teacher-password' : '/api/admin/reset-student-password';
+    const body = type === 'teacher' ? {teacher_id: id, new_password: newPw} : {student_id: id, new_password: newPw};
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (data.success) showToast('🔑 Password reset!', 'success');
+    else showToast(data.message, 'error');
+}
+
+function closeModal() {
+    document.getElementById('resetModal').classList.remove('show');
+    document.getElementById('deleteModal').classList.remove('show');
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+});
+
+// ═══════════════════════ FILTER ═══════════════════════
+async function loadPwResets() {
+    const res = await fetch('/api/admin/password-reset-requests');
+    const data = await res.json();
+    const container = document.getElementById('pwResetsTableContainer');
+    const badge = document.getElementById('pwResetBadge');
+    if (!data.success || data.requests.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><p>No pending password reset requests.</p></div>`;
+        badge.style.display = 'none';
+        return;
+    }
+    badge.textContent = data.requests.length;
+    badge.style.display = 'inline-block';
+    container.innerHTML = `
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Requested At</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${data.requests.map(r => `
+            <tr>
+                <td><strong>${esc(r.name || '—')}</strong></td>
+                <td><code>${esc(r.username)}</code></td>
+                <td>${r.requested_at || '—'}</td>
+                <td>
+                    <button class="btn-sm btn-reset" onclick="promptReset('teacher','${r.id}','${esc(r.name || r.username)}')">🔑 Reset Password</button>
+                </td>
+            </tr>`).join('')}
+        </tbody>
+    </table>`;
+}
+
+function filterTable(tableId, query) {
+    const table = document.getElementById(tableId);
+    if (!table) return;
+    const q = query.toLowerCase();
+    table.querySelectorAll('tbody tr').forEach(row => {
+        const search = (row.getAttribute('data-search') || row.textContent).toLowerCase();
+        row.style.display = search.includes(q) ? '' : 'none';
+    });
+}
+
+// ═══════════════════════ TOAST ═══════════════════════
+let toastTimer;
+function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'show ' + type;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.className = '', 3000);
+}
+
+// ═══════════════════════ HELPERS ═══════════════════════
+function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+</script>
+</body>
+</html>

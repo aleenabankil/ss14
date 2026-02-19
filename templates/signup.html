@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Gayathri Smart Speak</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px 35px;
+            max-width: 550px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .mascot { font-size: 70px; margin-bottom: 15px; }
+        h1 {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+        .subtitle { color: #666; font-size: 16px; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label {
+            display: block;
+            font-size: 15px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 3px solid #fdcb6e;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .form-group input[type="text"].user-id {
+            text-align: center;
+            letter-spacing: 8px;
+            font-weight: bold;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #e17055;
+            box-shadow: 0 0 0 3px rgba(253, 203, 110, 0.2);
+            transform: scale(1.01);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        .btn {
+            padding: 16px 25px;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #dfe6e9 0%, #b2bec3 100%);
+            color: #2d3436;
+        }
+        .error-message, .success-message {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .error-message { background: #ff7675; color: white; }
+        .success-message { background: #55efc4; color: #00b894; }
+        .error-message.show, .success-message.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .hint { color: #999; font-size: 12px; margin-top: 4px; font-style: italic; }
+        .hidden { display: none; }
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="mascot" id="mascot">✨</div>
+        <h1>Create Account</h1>
+        <p class="subtitle" id="subtitle">Start your journey!</p>
+        
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+        
+        <form id="signupForm">
+            <!-- Student Fields -->
+            <div id="studentFields">
+                <div class="form-group">
+                    <label for="userId">User ID (4 digits) *</label>
+                    <input type="text" id="userId" name="userId" maxlength="4" class="user-id" placeholder="0000">
+                    <p class="hint">Create a unique 4-digit ID</p>
+                </div>
+            </div>
+
+            <!-- Teacher Fields -->
+            <div id="teacherFields" class="hidden">
+                <div class="form-group">
+                    <label for="username">Username (6 characters) *</label>
+                    <input type="text" id="username" name="username" maxlength="6" placeholder="teacher">
+                    <p class="hint">Create a unique 6-character username</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name">
+            </div>
+
+            <!-- Student-only fields -->
+            <div id="studentOnlyFields">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="class">Class *</label>
+                        <select id="class" name="class">
+                            <option value="">Select Class</option>
+                            <option value="1">Class 1</option>
+                            <option value="2">Class 2</option>
+                            <option value="3">Class 3</option>
+                            <option value="4">Class 4</option>
+                            <option value="5">Class 5</option>
+                            <option value="6">Class 6</option>
+                            <option value="7">Class 7</option>
+                            <option value="8">Class 8</option>
+                            <option value="9">Class 9</option>
+                            <option value="10">Class 10</option>
+                            <option value="11">Class 11</option>
+                            <option value="12">Class 12</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="division">Division *</label>
+                        <select id="division" name="division">
+                            <option value="">Select Division</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password *</label>
+                <input type="password" id="password" name="password" placeholder="Create a password">
+                <p class="hint" id="passwordHint">At least 6 characters</p>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password *</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter your password">
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">🎉 Sign Up</button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='/user-type?action=signup'">
+                    ← Change User Type
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userType = urlParams.get('type') || 'student';
+
+        // Update UI based on user type
+        if (userType === 'teacher') {
+            document.getElementById('mascot').textContent = '👨‍🏫';
+            document.getElementById('subtitle').textContent = 'Teacher Registration';
+            document.getElementById('studentFields').classList.add('hidden');
+            document.getElementById('teacherFields').classList.remove('hidden');
+            document.getElementById('studentOnlyFields').classList.add('hidden');
+            document.getElementById('passwordHint').textContent = 'Must be exactly 6 characters';
+        } else {
+            document.getElementById('userId').addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
+
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+
+            let formData = {
+                user_type: userType,
+                password: document.getElementById('password').value,
+                name: document.getElementById('name').value
+            };
+
+            if (userType === 'teacher') {
+                formData.username = document.getElementById('username').value;
+                
+                // Validate teacher fields
+                if (!formData.username || formData.username.length !== 6) {
+                    errorMessage.textContent = 'Username must be exactly 6 characters!';
+                    errorMessage.classList.add('show');
+                    return;
+                }
+                if (!formData.password || formData.password.length !== 6) {
+                    errorMessage.textContent = 'Password must be exactly 6 characters!';
+                    errorMessage.classList.add('show');
+                    return;
+                }
+            } else {
+                formData.user_id = document.getElementById('userId').value;
+                formData.class = document.getElementById('class').value;
+                formData.division = document.getElementById('division').value;
+                
+                // Validate student fields
+                if (!formData.user_id || formData.user_id.length !== 4) {
+                    errorMessage.textContent = 'User ID must be exactly 4 digits!';
+                    errorMessage.classList.add('show');
+                    return;
+                }
+                if (!formData.class) {
+                    errorMessage.textContent = 'Please select your class!';
+                    errorMessage.classList.add('show');
+                    return;
+                }
+                if (!formData.division) {
+                    errorMessage.textContent = 'Please select your division!';
+                    errorMessage.classList.add('show');
+                    return;
+                }
+                if (formData.password.length < 6) {
+                    errorMessage.textContent = 'Password must be at least 6 characters!';
+                    errorMessage.classList.add('show');
+                    return;
+                }
+            }
+
+            if (!formData.name.trim()) {
+                errorMessage.textContent = 'Please enter your full name!';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (formData.password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match!';
+                errorMessage.classList.add('show');
+                return;
+            }
+            
+            // Send to server
+            fetch('/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.pending) {
+                        // Teacher registration pending admin approval
+                        successMessage.textContent = '✅ Registration submitted! Your account is pending admin approval. You will receive access once approved.';
+                        successMessage.classList.add('show');
+                        document.getElementById('signupForm').style.display = 'none';
+                    } else {
+                        successMessage.textContent = 'Account created successfully! Redirecting...';
+                        successMessage.classList.add('show');
+                        setTimeout(() => {
+                            window.location.href = data.redirect;
+                        }, 1500);
+                    }
+                } else {
+                    errorMessage.textContent = data.message;
+                    errorMessage.classList.add('show');
+                    setTimeout(() => {
+                        errorMessage.classList.remove('show');
+                    }, 3000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessage.textContent = 'Something went wrong. Please try again!';
+                errorMessage.classList.add('show');
+            });
+        });
+    </script>
+</body>
+</html>

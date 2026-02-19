@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher's Dashboard - Gayathri Smart Speak</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #e0e0e0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+
+        .header-left .subtitle {
+            color: #636e72;
+            font-size: 16px;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(214, 48, 49, 0.4);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(214, 48, 49, 0.6);
+        }
+
+        .filter-section {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            padding: 25px 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(162, 155, 254, 0.3);
+        }
+
+        .filter-section h2 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .filter-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .filter-group select {
+            padding: 12px 15px;
+            border: 3px solid white;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            background: white;
+            color: #2d3436;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .filter-group select:hover {
+            transform: scale(1.02);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .filter-group select:focus {
+            border-color: #fdcb6e;
+        }
+
+        .load-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(0, 184, 148, 0.4);
+            height: fit-content;
+        }
+
+        .load-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.6);
+        }
+
+        .class-section {
+            margin-bottom: 40px;
+        }
+
+        .class-header {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            padding: 20px 30px;
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .class-header h2 {
+            font-size: 28px;
+        }
+
+        .class-header .student-count {
+            background: rgba(255,255,255,0.3);
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .students-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .students-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .students-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .students-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .students-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .rank {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #2d3436;
+            font-weight: bold;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .rank.top3 {
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+            color: white;
+            box-shadow: 0 3px 10px rgba(214, 48, 49, 0.3);
+        }
+
+        .level-badge {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .xp-badge {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .stars-badge {
+            color: #ffd700;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .last-active {
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        .last-active.recent {
+            color: #00b894;
+            font-weight: bold;
+        }
+
+        .no-students {
+            text-align: center;
+            padding: 40px;
+            color: #636e72;
+            font-size: 18px;
+        }
+
+        .loading-message {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #636e72;
+            display: none;
+        }
+
+        .loading-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .students-table {
+                font-size: 14px;
+            }
+
+            .students-table th,
+            .students-table td {
+                padding: 10px 8px;
+            }
+
+            .class-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1>👨‍🏫 Teacher's Dashboard</h1>
+                <p class="subtitle">Welcome, {{ teacher_name }}!</p>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <button class="logout-btn" style="background: linear-gradient(135deg, #ffd700 0%, #e17055 100%); box-shadow: 0 5px 15px rgba(225,112,85,0.4);" onclick="window.location.href='/leaderboard'">
+                    🏆 View Leaderboard
+                </button>
+                <button class="logout-btn" onclick="if(confirm('Are you sure you want to logout? All progress is automatically saved.')) window.location.href='/logout'">
+                    🚪 Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h2>📊 Select Class to View</h2>
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="classSelect">Class</label>
+                    <select id="classSelect">
+                        <option value="">Select Class</option>
+                        {% for class_num in all_classes %}
+                        <option value="{{ class_num }}">Class {{ class_num }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="divisionSelect">Division</label>
+                    <select id="divisionSelect">
+                        <option value="">Select Division</option>
+                        {% for division in all_divisions %}
+                        <option value="{{ division }}">Division {{ division }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="load-btn" onclick="loadClassStudents()">Load Students</button>
+            </div>
+        </div>
+
+        <!-- Loading Message -->
+        <div class="loading-message" id="loadingMessage">
+            <p style="font-size: 24px; margin-bottom: 10px;">⏳</p>
+            <p>Loading students...</p>
+        </div>
+
+        <!-- Student Display Area -->
+        <div id="studentsDisplay"></div>
+    </div>
+
+    <script>
+        function loadClassStudents() {
+            const selectedClass = document.getElementById('classSelect').value;
+            const selectedDivision = document.getElementById('divisionSelect').value;
+            const loadingMessage = document.getElementById('loadingMessage');
+            const studentsDisplay = document.getElementById('studentsDisplay');
+
+            if (!selectedClass || !selectedDivision) {
+                alert('Please select both Class and Division');
+                return;
+            }
+
+            loadingMessage.classList.add('show');
+            studentsDisplay.innerHTML = '';
+
+            fetch('/get_class_students', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    class: selectedClass,
+                    division: selectedDivision
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingMessage.classList.remove('show');
+
+                if (data.success) {
+                    displayStudents(data.students, selectedClass, selectedDivision, data.total_students);
+                } else {
+                    studentsDisplay.innerHTML = `
+                        <div class="no-students">
+                            <p style="font-size: 24px; margin-bottom: 10px;">❌</p>
+                            <p>${data.message || 'Error loading students'}</p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                loadingMessage.classList.remove('show');
+                console.error('Error:', error);
+                studentsDisplay.innerHTML = `
+                    <div class="no-students">
+                        <p style="font-size: 24px; margin-bottom: 10px;">⚠️</p>
+                        <p>Something went wrong. Please try again.</p>
+                    </div>
+                `;
+            });
+        }
+
+        function displayStudents(students, classNum, division, totalStudents) {
+            const studentsDisplay = document.getElementById('studentsDisplay');
+
+            if (students.length === 0) {
+                studentsDisplay.innerHTML = `
+                    <div class="no-students">
+                        <p style="font-size: 24px; margin-bottom: 10px;">📚</p>
+                        <p>No students found in Class ${classNum}${division}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="class-section">
+                    <div class="class-header">
+                        <h2>Class ${classNum}${division}</h2>
+                        <div class="student-count">${totalStudents} Student${totalStudents !== 1 ? 's' : ''}</div>
+                    </div>
+
+                    <table class="students-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Level</th>
+                                <th>Total XP</th>
+                                <th>Stars</th>
+                                <th>Last Active</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            students.forEach((student, index) => {
+                const rank = index + 1;
+                const isTop3 = rank <= 3;
+                const lastDate = student.last_active.split(' ')[0];
+
+                html += `
+                    <tr>
+                        <td>
+                            <div class="rank ${isTop3 ? 'top3' : ''}">
+                                ${rank}
+                            </div>
+                        </td>
+                        <td><strong>${student.user_id}</strong></td>
+                        <td>${student.name}</td>
+                        <td>
+                            <span class="level-badge">🏆 Level ${student.level}</span>
+                        </td>
+                        <td>
+                            <span class="xp-badge">${student.total_xp} XP</span>
+                        </td>
+                        <td>
+                            <span class="stars-badge">${student.total_stars} ⭐</span>
+                        </td>
+                        <td>
+                            <span class="last-active">
+                                ${lastDate}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            studentsDisplay.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

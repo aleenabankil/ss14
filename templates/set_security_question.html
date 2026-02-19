@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Question – Gayathri Smart Speak</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .card {
+            background: white; border-radius: 30px;
+            padding: 45px 40px; max-width: 500px; width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center;
+        }
+        .emoji { font-size: 70px; margin-bottom: 15px; }
+        h1 {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 28px; margin-bottom: 8px;
+        }
+        .subtitle { color: #777; font-size: 15px; margin-bottom: 28px; }
+        .current-badge {
+            background: #f0f3ff; border: 2px solid #667eea; border-radius: 12px;
+            padding: 12px 16px; margin-bottom: 24px; font-size: 14px; color: #444;
+        }
+        .form-group { margin-bottom: 22px; text-align: left; }
+        label { display: block; font-weight: bold; color: #444; margin-bottom: 6px; font-size: 15px; }
+        select, input {
+            width: 100%; padding: 14px; border: 3px solid #667eea;
+            border-radius: 12px; font-size: 15px; outline: none; transition: all .3s;
+            font-family: inherit; background: white;
+        }
+        select:focus, input:focus { border-color: #764ba2; box-shadow: 0 0 0 3px rgba(102,126,234,.2); }
+        .hint { color: #999; font-size: 13px; margin-top: 4px; font-style: italic; }
+        .btn {
+            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            font-size: 18px; font-weight: bold; cursor: pointer;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; margin-top: 6px; transition: all .3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,.2);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,.3); }
+        .btn-back {
+            background: linear-gradient(135deg, #dfe6e9, #b2bec3);
+            color: #2d3436; margin-top: 10px;
+        }
+        .msg {
+            padding: 14px; border-radius: 10px; margin-bottom: 16px;
+            font-weight: bold; display: none;
+        }
+        .msg.error { background: #ff7675; color: white; display: block; }
+        .msg.success { background: #00b894; color: white; display: block; }
+        .tip {
+            background: #fff8e1; border-left: 4px solid #ffc107;
+            border-radius: 8px; padding: 12px 16px; margin-bottom: 24px;
+            font-size: 14px; color: #555; text-align: left;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="emoji">🔑</div>
+    <h1>
+        {% if existing_question %}
+            Update Security Question
+        {% else %}
+            Set Security Question
+        {% endif %}
+    </h1>
+    <p class="subtitle">
+        This helps you reset your password if you ever forget it.
+    </p>
+
+    {% if existing_question %}
+    <div class="current-badge">
+        ✅ Current question: <strong>{{ existing_question }}</strong>
+    </div>
+    {% endif %}
+
+    <div class="tip">
+        💡 Choose a question with an answer only <em>you</em> will remember.
+        The answer is not case-sensitive, so "Cat" and "cat" are the same.
+    </div>
+
+    <div id="msg" class="msg"></div>
+
+    <div class="form-group">
+        <label>Choose a Security Question</label>
+        <select id="question">
+            <option value="">— Select a question —</option>
+            {% for q in questions %}
+            <option value="{{ q }}"
+                {% if existing_question == q %}selected{% endif %}>
+                {{ q }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Your Answer</label>
+        <input type="text" id="answer" placeholder="Type your answer here" autocomplete="off">
+        <p class="hint">Keep it simple and memorable!</p>
+    </div>
+
+    <button class="btn" onclick="save()">💾 Save Security Question</button>
+    <button class="btn btn-back" onclick="window.location.href='/main'">← Back to Dashboard</button>
+</div>
+
+<script>
+    function showMsg(text, type) {
+        const el = document.getElementById('msg');
+        el.className = 'msg ' + type;
+        el.textContent = text;
+        if (type === 'error') {
+            setTimeout(() => { el.className = 'msg'; el.textContent = ''; }, 4000);
+        }
+    }
+
+    async function save() {
+        const question = document.getElementById('question').value;
+        const answer   = document.getElementById('answer').value.trim();
+        if (!question) { showMsg('Please select a question!', 'error'); return; }
+        if (!answer || answer.length < 2) { showMsg('Please enter your answer!', 'error'); return; }
+
+        const res = await fetch('/set-security-question', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({question, answer})
+        });
+        const data = await res.json();
+        if (data.success) {
+            showMsg('✅ ' + data.message, 'success');
+            setTimeout(() => window.location.href = '/main', 2000);
+        } else {
+            showMsg(data.message, 'error');
+        }
+    }
+</script>
+</body>
+</html>

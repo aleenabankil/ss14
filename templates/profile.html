@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile - Gayathri Smart Speak</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #e0e0e0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 36px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(253, 203, 110, 0.4);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(253, 203, 110, 0.6);
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(214, 48, 49, 0.4);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(214, 48, 49, 0.6);
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            padding: 25px;
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .profile-card h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .profile-card .value {
+            font-size: 36px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .level-card {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #2d3436;
+        }
+
+        .xp-card {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+        }
+
+        .stars-card {
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+        }
+
+        .progress-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .progress-section h2 {
+            color: #2d3436;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .progress-bar-container {
+            background: #e0e0e0;
+            height: 40px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #00b894, #00cec9, #ffd700);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 0.8s ease;
+        }
+
+        .activity-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .activity-section h2 {
+            color: #2d3436;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .activity-item {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .activity-item .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .activity-item .name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+
+        .activity-item .stats {
+            font-size: 14px;
+            color: #636e72;
+        }
+
+        .activity-item .stars {
+            font-size: 24px;
+            color: #ffd700;
+            margin-top: 10px;
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .info-item .icon {
+            font-size: 36px;
+        }
+
+        .info-item .details {
+            flex: 1;
+        }
+
+        .info-item .label {
+            font-size: 14px;
+            color: #636e72;
+            margin-bottom: 5px;
+        }
+
+        .info-item .value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3436;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .profile-grid, .activity-grid, .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                width: 100%;
+            }
+
+            .back-btn, .logout-btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👤 My Profile</h1>
+            <div class="button-group">
+                <button class="back-btn" onclick="window.location.href='/main'">
+                    ← Back to Learning
+                </button>
+                <button class="logout-btn" onclick="if(confirm('Are you sure you want to logout?')) window.location.href='/logout'">
+                    🚪 Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Profile Cards -->
+        <div class="profile-grid">
+            <div class="profile-card level-card">
+                <h3>Current Level</h3>
+                <div class="value">🏆 Level {{ user_data.level }}</div>
+            </div>
+            <div class="profile-card xp-card">
+                <h3>Total Experience</h3>
+                <div class="value">{{ user_data.total_xp }} XP</div>
+            </div>
+            <div class="profile-card stars-card">
+                <h3>Stars Collected</h3>
+                <div class="value">⭐ {{ user_data.total_stars }}</div>
+            </div>
+        </div>
+
+        <!-- Progress to Next Level -->
+        <div class="progress-section">
+            <h2>📈 Progress to Next Level</h2>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" style="width: {{ (xp_in_current_level / xp_needed_for_next * 100) }}%">
+                    {{ xp_in_current_level }}/{{ xp_needed_for_next }} XP
+                </div>
+            </div>
+            <p style="text-align: center; color: #636e72; font-size: 16px;">
+                Keep earning stars to reach Level {{ user_data.level + 1 }}!
+            </p>
+        </div>
+
+        <!-- Activity Stats – loaded dynamically via JS from /api/get-achievements -->
+        <div class="activity-section">
+            <h2>🎮 Activity Statistics</h2>
+            <div id="activityGrid" class="activity-grid">
+                <div style="text-align:center;padding:20px;color:#636e72;font-size:16px;">⏳ Loading activity stats…</div>
+            </div>
+        </div>
+
+        <!-- Personal Info -->
+        <div class="info-section">
+            <h2 style="color: #2d3436; margin-bottom: 20px; font-size: 24px;">📋 Personal Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="icon">👤</div>
+                    <div class="details">
+                        <div class="label">Full Name</div>
+                        <div class="value">{{ user_data.name }}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="icon">🏫</div>
+                    <div class="details">
+                        <div class="label">Class</div>
+                        <div class="value">Class {{ user_data.class }}{{ user_data.division }}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="icon">🆔</div>
+                    <div class="details">
+                        <div class="label">User ID</div>
+                        <div class="value">{{ user_id }}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="icon">📅</div>
+                    <div class="details">
+                        <div class="label">Member Since</div>
+                        <div class="value">{{ user_data.created_at.split()[0] }}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="icon">🕐</div>
+                    <div class="details">
+                        <div class="label">Last Active</div>
+                        <div class="value">{{ user_data.last_active.split()[0] }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievement Badges Section -->
+        <div class="info-section" style="margin-top:25px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+                <h2 style="color:#2d3436;font-size:24px;">🏆 Achievement Badges</h2>
+                <div style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:8px 16px;border-radius:20px;font-size:14px;font-weight:bold;">
+                    🏅 <span id="totalBadges">-</span> Badges Earned
+                </div>
+            </div>
+            <!-- Activity stats bar -->
+            <div id="activityStats" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;">
+                <div style="background:#e8f4fd;border-radius:12px;padding:8px 14px;font-size:13px;">💬 <strong><span id="statConv">-</span></strong> Conversations</div>
+                <div style="background:#fef9e7;border-radius:12px;padding:8px 14px;font-size:13px;">🎭 <strong><span id="statRole">-</span></strong> Roleplays</div>
+                <div style="background:#e8f8f5;border-radius:12px;padding:8px 14px;font-size:13px;">🔁 <strong><span id="statRep">-</span></strong> Sentences Repeated</div>
+                <div style="background:#fdf2f8;border-radius:12px;padding:8px 14px;font-size:13px;">🐝 <strong><span id="statSpell">-</span></strong> Words Spelled Correctly</div>
+                <div style="background:#fef5e4;border-radius:12px;padding:8px 14px;font-size:13px;">📖 <strong><span id="statVocab">-</span></strong> Words Looked Up</div>
+                <div style="background:#f9ebea;border-radius:12px;padding:8px 14px;font-size:13px;">🎯 <strong><span id="statPerfect">-</span></strong> Perfect Pronunciations</div>
+            </div>
+            <div id="badgesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;">
+                <div style="text-align:center;padding:20px;color:#999;">⏳ Loading badges...</div>
+            </div>
+        </div>
+
+        <!-- Daily Challenges Section -->
+        <div class="info-section" style="margin-top:25px;">
+            <h2 style="color:#2d3436;font-size:24px;margin-bottom:20px;">📅 Weekly Challenges</h2>
+            <div id="profileChallenges" style="display:flex;flex-direction:column;gap:15px;">
+                <div style="text-align:center;color:#999;">⏳ Loading challenges...</div>
+            </div>
+        </div>
+
+        <!-- Mistake Tracking Section -->
+        <div class="info-section" style="margin-top:25px;">
+            <h2 style="color:#2d3436;font-size:24px;margin-bottom:20px;">📊 Mistake Tracker</h2>
+            <div id="mistakesSection">
+                <div style="text-align:center;color:#999;">⏳ Loading mistake data...</div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Link -->
+        <div style="text-align:center;margin-top:25px;">
+            <a href="/leaderboard" style="display:inline-block;padding:15px 35px;background:linear-gradient(135deg,#FFD700,#FFA500);color:white;border-radius:25px;text-decoration:none;font-size:18px;font-weight:bold;box-shadow:0 8px 25px rgba(255,215,0,0.4);">
+                🏆 View Weekly Leaderboard
+            </a>
+        </div>
+    </div>
+
+<style>
+.badge-card {
+    background: white;
+    border-radius: 15px;
+    padding: 15px 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    border: 2px solid #eee;
+}
+.badge-card.earned {
+    border-color: #FFD700;
+    background: linear-gradient(135deg, #fffde7, #fff9c4);
+    box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+}
+.badge-card:hover { transform: translateY(-3px); }
+.badge-icon { font-size: 36px; margin-bottom: 8px; }
+.badge-name { font-size: 13px; font-weight: bold; color: #333; }
+.badge-desc { font-size: 11px; color: #777; margin-top: 4px; }
+.badge-locked { filter: grayscale(1); opacity: 0.45; }
+.challenge-row {
+    background: #f8f9ff;
+    border-radius: 15px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.challenge-row.done { background: #f0fff4; border: 1px solid #b2dfdb; }
+.mistake-card {
+    background: #fff5f5;
+    border-radius: 12px;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-left: 4px solid #ff6b6b;
+    font-size: 14px;
+}
+.mistake-category {
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #eee;
+}
+</style>
+
+<script>
+async function loadProfileData() {
+    // First: ensure this user's badges & levels are up to date (server-side check)
+    try { await fetch('/api/ensure-badges', { method: 'POST' }); } catch(e) {}
+
+    // Load achievements
+    try {
+        const res = await fetch('/api/get-achievements');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if (data.success) {
+            const earned = (data.badges || []).filter(b => b.earned).length;
+            const totalBadgesEl = document.getElementById('totalBadges');
+            if (totalBadgesEl) totalBadgesEl.textContent = earned + '/' + (data.badges || []).length;
+
+            // Populate activity stats
+            if (data.stats) {
+                const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || 0; };
+                set('statConv',    data.stats.conversations);
+                set('statRole',    data.stats.roleplays);
+                set('statRep',     data.stats.repeats);
+                set('statSpell',   data.stats.spellings);
+                set('statVocab',   data.stats.vocabulary);
+                set('statPerfect', data.stats.high_pronunciation);
+            }
+
+            let html = '';
+            (data.badges || []).forEach(badge => {
+                html += `<div class="badge-card ${badge.earned ? 'earned' : ''}">
+                    <div class="badge-icon ${badge.earned ? '' : 'badge-locked'}">${badge.icon}</div>
+                    <div class="badge-name">${badge.name}</div>
+                    <div class="badge-desc">${badge.desc}</div>
+                    ${badge.earned ? '<div style="margin-top:6px;font-size:11px;color:#e67e22;font-weight:bold;">✅ Earned!</div>' : '<div style="margin-top:6px;font-size:11px;color:#bbb;">🔒 Locked</div>'}
+                </div>`;
+            });
+            const badgesGridEl = document.getElementById('badgesGrid');
+            if (badgesGridEl) badgesGridEl.innerHTML = html || '<div style="color:#999">No badges defined.</div>';
+
+            // Populate Activity Statistics section dynamically
+            const s = data.stats || {};
+            const activities = [
+                { icon: '💬', name: 'Conversations',          count: s.conversations || 0,      unit: 'sessions' },
+                { icon: '🎭', name: 'Roleplay Sessions',       count: s.roleplays || 0,          unit: 'sessions' },
+                { icon: '🔁', name: 'Sentences Repeated',      count: s.repeats || 0,            unit: 'sentences' },
+                { icon: '🐝', name: 'Words Spelled Correctly', count: s.spellings || 0,          unit: 'words' },
+                { icon: '📖', name: 'Words Looked Up',         count: s.vocabulary || 0,         unit: 'words' },
+                { icon: '🎯', name: 'Perfect Pronunciations',  count: s.high_pronunciation || 0, unit: 'times' },
+            ];
+            const anyActivity = activities.some(a => a.count > 0);
+            let actHtml = '';
+            if (anyActivity) {
+                activities.forEach(a => {
+                    actHtml += `<div class="activity-item">
+                        <div class="icon">${a.icon}</div>
+                        <div class="name">${a.name}</div>
+                        <div class="stats">${a.count} ${a.unit}</div>
+                    </div>`;
+                });
+            } else {
+                actHtml = `<div class="activity-item" style="grid-column:1/-1;text-align:center;">
+                    <div class="icon">🎯</div>
+                    <div class="name">Get Started!</div>
+                    <div class="stats">Complete activities to see your stats here</div>
+                </div>`;
+            }
+            const actGridEl = document.getElementById('activityGrid');
+            if (actGridEl) actGridEl.innerHTML = actHtml;
+        } else {
+            throw new Error('API returned success=false');
+        }
+    } catch(e) {
+        console.error('Badge load error:', e);
+        const bg = document.getElementById('badgesGrid');
+        if (bg) bg.innerHTML = '<div style="color:#999">Could not load badges. Please refresh.</div>';
+        const ag = document.getElementById('activityGrid');
+        if (ag) ag.innerHTML = '<div style="color:#999">Could not load activity stats.</div>';
+    }
+
+    // Load daily challenges
+    try {
+        const res = await fetch('/api/get-daily-challenges');
+        const data = await res.json();
+        if (data.success) {
+            const titles = ['Complete 5 Conversation/Roleplay sessions', 'Complete 10 Repeat or Word Meaning exercises', 'Score 80%+ pronunciation accuracy 3 times'];
+            const icons = ['🗣️','📚','🎯'];
+            let html = '';
+            [1,2,3].forEach(i => {
+                const c = data.challenges['challenge'+i];
+                if (!c) return;
+                const pct = Math.min(100, Math.round(c.current / c.target * 100));
+                const done = c.completed;
+                html += `<div class="challenge-row ${done ? 'done' : ''}">
+                    <div style="font-size:28px;">${icons[i-1]}</div>
+                    <div style="flex:1;">
+                        <div style="font-weight:bold;color:#333;font-size:15px;">${titles[i-1]}</div>
+                        <div style="margin-top:8px;background:#e0e0e0;border-radius:10px;height:10px;overflow:hidden;">
+                            <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:10px;"></div>
+                        </div>
+                        <div style="font-size:12px;color:#666;margin-top:4px;">${c.current}/${c.target} completed</div>
+                    </div>
+                    <div style="font-size:22px;">${done ? '✅' : '⏳'}</div>
+                    <div style="font-weight:bold;color:#764ba2;">+${c.xp} XP</div>
+                </div>`;
+            });
+            html += `<div style="text-align:center;padding:10px;color:#999;font-size:13px;">🔥 Weekly challenge streak: ${data.streak || 0} weeks | Challenges reset every Monday</div>`;
+            document.getElementById('profileChallenges').innerHTML = html;
+        }
+    } catch(e) { document.getElementById('profileChallenges').innerHTML = '<div style="color:#999">Could not load challenges.</div>'; }
+
+    // Load mistakes
+    try {
+        const res = await fetch('/api/get-mistakes');
+        const data = await res.json();
+        if (data.success) {
+            const total = data.total;
+            if (total === 0) {
+                document.getElementById('mistakesSection').innerHTML = '<div style="text-align:center;padding:30px;color:#43e97b;font-size:18px;">🎉 No mistakes tracked yet! Keep practicing!</div>';
+                return;
+            }
+            let html = `<div style="text-align:center;margin-bottom:20px;padding:12px;background:#fff5f5;border-radius:12px;font-size:16px;">Total mistakes tracked: <strong>${total}</strong></div>`;
+            const cats = [
+                {key: 'pronunciation', label: '🎤 Pronunciation Mistakes', color: '#ff6b6b', tip: 'Try speaking more slowly and clearly.'},
+                {key: 'spelling', label: '📝 Spelling Mistakes', color: '#ffa502', tip: 'Practice spelling these words again.'},
+                {key: 'vocabulary', label: '📖 Vocabulary Difficulties', color: '#7bed9f', tip: 'Look up these words again to remember them.'},
+            ];
+            cats.forEach(cat => {
+                const items = data[cat.key];
+                if (!items || items.length === 0) return;
+                html += `<div class="mistake-category" style="color:${cat.color};">${cat.label}</div>`;
+                items.slice().reverse().forEach(m => {
+                    const d = m.data;
+                    let detail = '';
+                    if (d.sentence) detail = `Said: "${d.said || ''}" | Correct: "${d.sentence}" | Score: ${d.score}%`;
+                    else if (d.word && d.typed) detail = `Typed: "${d.typed}" | Correct: "${d.word}" | Match: ${d.similarity}%`;
+                    else if (d.word) detail = `Word: "${d.word}"`;
+                    else detail = JSON.stringify(d);
+                    html += `<div class="mistake-card"><span style="color:#999;font-size:11px;">${m.time}</span><br>${detail}</div>`;
+                });
+                html += `<div style="font-size:13px;color:#666;margin-bottom:15px;padding:8px;background:#f8f8f8;border-radius:8px;">💡 Tip: ${cat.tip}</div>`;
+            });
+            document.getElementById('mistakesSection').innerHTML = html;
+        }
+    } catch(e) { document.getElementById('mistakesSection').innerHTML = '<div style="color:#999">Could not load mistake data.</div>'; }
+}
+loadProfileData();
+</script>
+</body>
+</html>

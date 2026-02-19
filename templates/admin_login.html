@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Gayathri Smart Speak</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 45px 40px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+        .shield { font-size: 70px; margin-bottom: 15px; }
+        h1 {
+            color: #2d3436;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .subtitle { color: #636e72; font-size: 14px; margin-bottom: 30px; }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 13px 15px;
+            border: 2px solid #dfe6e9;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+            color: #2d3436;
+        }
+        .form-group input:focus {
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
+        }
+        .error-message {
+            background: #ff7675;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .error-message.show { display: block; }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #b2bec3;
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #636e72; }
+        .divider {
+            border: none;
+            border-top: 1px solid #f0f0f0;
+            margin: 25px 0 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="shield">🛡️</div>
+        <h1>Admin Portal</h1>
+        <div class="badge">Restricted Access</div>
+        <p class="subtitle">Sign in with your admin credentials to continue.</p>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter admin username" autocomplete="username">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter admin password" autocomplete="current-password">
+        </div>
+
+        <button class="btn-login" id="loginBtn" onclick="doLogin()">🔐 Sign In</button>
+
+        <hr class="divider">
+        <a class="back-link" href="/">← Back to Home</a>
+    </div>
+
+    <script>
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') doLogin();
+        });
+
+        function doLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+            const btn = document.getElementById('loginBtn');
+
+            if (!username || !password) {
+                errorDiv.textContent = 'Please enter both username and password.';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Signing in...';
+            errorDiv.classList.remove('show');
+
+            fetch('/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    errorDiv.textContent = data.message;
+                    errorDiv.classList.add('show');
+                    btn.disabled = false;
+                    btn.textContent = '🔐 Sign In';
+                }
+            })
+            .catch(() => {
+                errorDiv.textContent = 'Connection error. Please try again.';
+                errorDiv.classList.add('show');
+                btn.disabled = false;
+                btn.textContent = '🔐 Sign In';
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select User Type - Gayathri Smart Speak</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 60px 50px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .mascot {
+            font-size: 100px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 20px;
+            margin-bottom: 50px;
+        }
+
+        .user-type-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .user-card {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            padding: 40px 30px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .user-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.5);
+        }
+
+        .user-card.student {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        }
+
+        .user-card.teacher {
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+        }
+
+        .user-card.admin {
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+        }
+
+        .user-card .icon {
+            font-size: 80px;
+            margin-bottom: 15px;
+        }
+
+        .user-card .title {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .user-card .description {
+            color: rgba(255,255,255,0.9);
+            font-size: 16px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #dfe6e9 0%, #b2bec3 100%);
+            color: #2d3436;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 30px;
+            }
+
+            .user-type-cards {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .mascot {
+                font-size: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="mascot">🎓</div>
+        <h1>Who are you?</h1>
+        <p class="subtitle">Select your role to continue</p>
+
+        <div class="user-type-cards">
+            <div class="user-card student" onclick="selectType('student')">
+                <div class="icon">👨‍🎓</div>
+                <div class="title">Student</div>
+                <div class="description">I want to learn English</div>
+            </div>
+
+            <div class="user-card teacher" onclick="selectType('teacher')">
+                <div class="icon">👨‍🏫</div>
+                <div class="title">Teacher</div>
+                <div class="description">I want to monitor students</div>
+            </div>
+
+            <div class="user-card admin" onclick="window.location.href='/admin/login'">
+                <div class="icon">🛡️</div>
+                <div class="title">Admin</div>
+                <div class="description">Manage users &amp; approvals</div>
+            </div>
+        </div>
+
+        <button class="back-btn" onclick="window.location.href='/'">
+            ← Back to Home
+        </button>
+    </div>
+
+    <script>
+        function selectType(type) {
+            const action = new URLSearchParams(window.location.search).get('action') || 'login';
+            window.location.href = `/${action}?type=${type}`;
+        }
+    </script>
+</body>
+</html>
