@@ -574,10 +574,17 @@ function showSection(name) {
         overview: ['Overview', 'Welcome back!'],
         pending:  ['Pending Approvals', 'Teachers awaiting your review'],
         teachers: ['All Teachers', 'Manage teacher accounts'],
-        students: ['All Students', 'Manage student accounts']
+        students: ['All Students', 'Manage student accounts'],
+        pwresets: ['🔑 PW Reset Requests', 'Teachers who have requested a password reset']
     };
-    document.getElementById('sectionTitle').textContent = titles[name][0];
-    document.getElementById('sectionSubtitle').textContent = titles[name][1];
+    if (titles[name]) {
+        document.getElementById('sectionTitle').textContent = titles[name][0];
+        document.getElementById('sectionSubtitle').textContent = titles[name][1];
+    }
+    if (name === 'pending') renderPendingTable();
+    if (name === 'teachers') renderTeachersTable();
+    if (name === 'students') renderStudentsTable();
+    if (name === 'pwresets') loadPwResets();
 }
 
 // ═══════════════════════ LOAD DATA ═══════════════════════

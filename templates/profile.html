@@ -87,6 +87,24 @@
             box-shadow: 0 8px 20px rgba(214, 48, 49, 0.6);
         }
 
+        .security-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .security-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+        }
+
         .profile-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -277,6 +295,9 @@
             <div class="button-group">
                 <button class="back-btn" onclick="window.location.href='/main'">
                     ← Back to Learning
+                </button>
+                <button class="security-btn" onclick="window.location.href='/set-security-question'" title="Set or update your secret question for password recovery">
+                    🔑 Security Question
                 </button>
                 <button class="logout-btn" onclick="if(confirm('Are you sure you want to logout?')) window.location.href='/logout'">
                     🚪 Logout
